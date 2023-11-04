@@ -1,6 +1,7 @@
 // root/middlewares/authMiddleware.js
 
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const hashPassword = async (req, res, next) => {
     try {
@@ -13,13 +14,22 @@ const hashPassword = async (req, res, next) => {
     }
 };
 const authMiddleware = (req, res, next) => {
-    // Insert your authentication logic here
-    // If authenticated, call next()
-    // If not authenticated, you might send a 401 Unauthorized response, for example:
-    // res.status(401).send('Unauthorized');
+    const authHeader = req.headers.authorization;
 
-    // For now, we'll just call next()
-    next();
+    if (authHeader) {
+        const token = authHeader.split(' ')[1]; // Authorization: Bearer <token>
+
+        jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+            if (err) {
+                return res.status(403).json({ error: 'Token is not valid' });
+            }
+
+            req.user = user;
+            next();
+        });
+    } else {
+        res.status(401).send('Authorization header is missing');
+    }
 };
 
 module.exports = {
