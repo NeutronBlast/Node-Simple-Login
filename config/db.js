@@ -8,16 +8,20 @@ const pool = new Pool({
 
 const connectDB = async () => {
     try {
-        // Here we are just making a simple query without checking out a client
-        const res = await pool.query('SELECT 1'); // This will check if the connection is successful
-        console.log('PostgreSQL connected', res);
+        // Attempt to get connection. If this fails, it will throw an error.
+        const client = await pool.connect();
+
+        // Release the client back to the pool
+        client.release();
+
+        console.log('PostgreSQL connected successfully.');
     } catch (error) {
-        console.error('Database connection failed', error);
+        console.error('PostgreSQL connection failed:', error.stack);
         process.exit(1);
     }
 };
 
 module.exports = {
     connectDB,
-    query: (text, params) => pool.query(text, params), // Expose a query method for convenience
+    pool // You might want to export the pool to use it directly in your queries
 };

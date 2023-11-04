@@ -12,18 +12,15 @@ const applyRoutes = require('./app/routes');
 // Apply Middlewares
 const corsMiddleware = require('./app/middlewares/corsMiddleware');
 
-// Establish database connection
-connectDB().then(() => {
-    // Database connected
-}).catch((err) => {
-    console.error('Database connection failed:', err);
-    process.exit(1);
-});
-
-// Apply middlewares and routes
+// Apply middlewares
 app.use(express.json()); // Middleware to parse JSON bodies
 app.use(corsMiddleware);
+
+// Apply routes
 applyRoutes(app);
+
+// Establish database connection
+connectDB();
 
 // Start the server
 const PORT = process.env.PORT || 3000;

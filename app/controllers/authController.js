@@ -24,7 +24,7 @@ exports.login = async (req, res) => {
         });
 
         // Return user and token
-        res.json({
+        res.status(200).json({
             user: {
                 id: user.id,
                 name: user.name,
