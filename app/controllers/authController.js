@@ -2,6 +2,42 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 
+/**
+ * Authenticate a user and generate an access token upon successful login.
+ *
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Object} - An object containing user information and an access token upon successful login.
+ * @throws {Object} - An error response object with details of the error, if authentication fails.
+ *
+ * @example
+ * // Request
+ * POST /login
+ * {
+ *   "phone": "user_phone_number",
+ *   "password": "user_password"
+ * }
+ *
+ * // Response (on successful login)
+ * {
+ *   "user": {
+ *     "id": 123,
+ *     "name": "Frank Hesse",
+ *     "session_active": true,
+ *     "email": "user@example.com",
+ *     "phone": "user_phone_number",
+ *     "address": "User Address"
+ *   },
+ *   "access_token": "jwt_access_token",
+ *   "token_type": "bearer"
+ * }
+ *
+ * // Response (on authentication failure)
+ * {
+ *   "error": "Password is incorrect"
+ * }
+ */
+
 exports.login = async (req, res) => {
     try {
         const { phone, password } = req.body;

@@ -15,8 +15,7 @@ jest.mock('jsonwebtoken', () => ({
 
 // Mocking User model
 jest.mock('../../../app/models/userModel', () => ({
-    findOne: jest.fn(),
-    // ... any other methods you need to mock
+    findOne: jest.fn()
 }));
 
 describe('authController login function', () => {

@@ -1,4 +1,3 @@
-// usersController.test.js
 const { getUsers, getUser, createUser, updateUser, deleteUser } = require('../../../app/controllers/usersController');
 const User = require('../../../app/models/userModel'); // Adjust the import path as necessary
 const bcrypt = require('bcryptjs');
@@ -25,8 +24,7 @@ describe('getUsers', () => {
     it('should return a list of users', async () => {
         // Arrange
         const mockUsers = [
-            { id: 1, name: 'Alice', phone: '123456', email: 'alice@example.com', address: '123 Main St', session_active: true },
-            // Add more mock users as necessary
+            { id: 1, name: 'Alice', phone: '123456', email: 'alice@example.com', address: '123 Main St', session_active: true }
         ];
         User.findAll.mockResolvedValue(mockUsers);
 
@@ -89,7 +87,7 @@ describe('getUser', () => {
             phone: "5654654",
             email: "test@example.com",
             address: null,
-            session_active: true // This will be overridden to always be true
+            session_active: true
         };
         User.findByPk.mockResolvedValue(mockUser);
 
@@ -154,8 +152,6 @@ describe('getUser', () => {
 });
 
 describe('createUser', () => {
-    // Mock bcrypt here if you want to test the hashPassword middleware as well
-
     it('should create a new user and return the user data', async () => {
         // Arrange
         const mockUser = {
@@ -281,8 +277,6 @@ describe('createUser', () => {
             status: jest.fn(() => res),
             json: jest.fn()
         };
-
-        // You should have validation logic in your `createUser` function to check for required fields
 
         // Act
         await createUser(req, res);

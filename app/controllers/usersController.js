@@ -1,8 +1,17 @@
 const User = require("../models/userModel");
 
+/**
+ * Retrieve a list of all users.
+ *
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Object} - A JSON array containing user information.
+ * @throws {Object} - An error response object if an internal server error occurs.
+ */
+
 exports.getUsers = async (req, res) => {
     try {
-        const users = await User.findAll(); // Assuming 'findAll' is a method to get all users
+        const users = await User.findAll();
 
         // Transform users if needed or just send the raw data
         const usersData = users.map(user => ({
@@ -20,11 +29,20 @@ exports.getUsers = async (req, res) => {
     }
 };
 
+/**
+ * Retrieve a specific user by their ID.
+ *
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Object} - A JSON object containing user information.
+ * @throws {Object} - An error response object if the user is not found or if an internal server error occurs.
+ */
+
 exports.getUser = async (req, res) => {
     const { id_user } = req.params; // Extract the ID from the request parameters
 
     try {
-        const user = await User.findByPk(id_user); // Assuming 'findByPk' is the method to get a user by primary key
+        const user = await User.findByPk(id_user);
 
         if (!user) {
             return res.status(404).json({ error: 'User not found' }); // User with the given ID was not found
@@ -37,7 +55,7 @@ exports.getUser = async (req, res) => {
             phone: user.phone,
             email: user.email,
             address: user.address,
-            session_active: true // As per requirements, this is always true
+            session_active: true
         };
 
         res.status(200).json(userData);
@@ -45,6 +63,15 @@ exports.getUser = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
+/**
+ * Create a new user with the provided data.
+ *
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Object} - A JSON object containing the newly created user's information.
+ * @throws {Object} - An error response object if user creation fails due to validation or an internal server error.
+ */
 
 exports.createUser = async (req, res) => {
     let { name, phone, email, password, address } = req.body; // Extract the data from the request body
@@ -89,6 +116,15 @@ exports.createUser = async (req, res) => {
     }
 };
 
+/**
+ * Update an existing user's information based on their ID.
+ *
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Object} - A JSON object containing the updated user's information.
+ * @throws {Object} - An error response object if user update fails due to validation, user not found, or an internal server error.
+ */
+
 exports.updateUser = async (req, res) => {
     const { id_user } = req.params;
     let { name, phone, email, password, address } = req.body;
@@ -123,7 +159,7 @@ exports.updateUser = async (req, res) => {
             name,
             phone,
             email,
-            password, // Ensure password hashing logic is in place
+            password,
             address
         };
 
@@ -150,6 +186,14 @@ exports.updateUser = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
+/**
+ * Delete an existing user based on their ID.
+ *
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ * @throws {Object} - An error response object if the user is not found or if an internal server error occurs.
+ */
 
 exports.deleteUser = async (req, res) => {
     const { id_user } = req.params;

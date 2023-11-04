@@ -1,12 +1,11 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
-// Initialize your database connection
+// Initialize DB connection
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect: 'postgres',
-    // Additional options may be required depending on your DB setup
 });
 
-// Define the User model that reflects the structure of your SQL table
+// Define the User model that reflects the structure of the SQL table
 const User = sequelize.define('User', {
     id: {
         type: DataTypes.INTEGER,
@@ -38,7 +37,6 @@ const User = sequelize.define('User', {
         allowNull: false,
     },
 }, {
-    // Additional model options go here
     sequelize, // Pass the connection instance
     modelName: 'User', // We need to choose the model name
     tableName: 'users', // We can specify the table name directly

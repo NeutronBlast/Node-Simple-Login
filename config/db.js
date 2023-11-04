@@ -1,11 +1,41 @@
-// config/db.js
+/**
+ * PostgreSQL Database Configuration Module.
+ *
+ * This module provides a PostgreSQL database connection pool and a function to establish a connection to the database.
+ * It exports the database connection pool and the `connectDB` function for establishing connections.
+ *
+ * @module config/db
+ */
 const { Pool } = require('pg');
 
-// Create a new pool instance
+/**
+ * PostgreSQL connection pool instance.
+ *
+ * The pool is configured with the connection string obtained from the `DATABASE_URL` environment variable.
+ * You can use this pool to execute SQL queries and manage database connections.
+ *
+ * @type {Pool}
+ */
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL
 });
 
+/**
+ * Establishes a connection to the PostgreSQL database.
+ *
+ * This function attempts to get a connection from the connection pool.
+ * If the connection attempt fails, it logs an error and exits the application.
+ * If successful, the connection is released back to the pool, and a success message is logged.
+ *
+ * @async
+ * @function
+ * @throws {Error} If the database connection cannot be established.
+ *
+ * @example
+ * const db = require('./config/db');
+ * db.connectDB();
+ *
+ */
 const connectDB = async () => {
     try {
         // Attempt to get connection. If this fails, it will throw an error.
@@ -23,5 +53,5 @@ const connectDB = async () => {
 
 module.exports = {
     connectDB,
-    pool // You might want to export the pool to use it directly in your queries
+    pool // For queries
 };

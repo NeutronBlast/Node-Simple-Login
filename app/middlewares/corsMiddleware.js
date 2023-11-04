@@ -1,5 +1,10 @@
-// corsMiddleware.js
-
+/**
+ * Middleware that enables Cross-Origin Resource Sharing (CORS) for HTTP requests.
+ * By default, this middleware allows all origins and common HTTP methods.
+ * Adjust the 'origin' property in 'corsOptions' to restrict allowed origins.
+ *
+ * @module corsMiddleware
+ */
 const cors = require('cors');
 
 // Setup CORS options if needed
