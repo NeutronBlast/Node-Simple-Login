@@ -1,5 +1,5 @@
 // usersController.test.js
-const { getUsers, getUser, createUser } = require('../../../app/controllers/usersController');
+const { getUsers, getUser, createUser, updateUser } = require('../../../app/controllers/usersController');
 const User = require('../../../app/models/userModel'); // Adjust the import path as necessary
 const bcrypt = require('bcryptjs');
 
@@ -217,7 +217,10 @@ describe('createUser', () => {
 
         const res = {
             status: jest.fn(() => res),
-            json: jest.fn()
+            json: jest.fn((user) => {
+                console.log('User updated:', user); // This will print the list of users to the console
+                return res; // Maintain the chainability of the res object
+            }),
         };
 
         // Act
@@ -289,5 +292,190 @@ describe('createUser', () => {
         expect(res.json).toHaveBeenCalledWith({
             error: expect.stringContaining('All fields are required') // The error message should mention the missing fields
         });
+    });
+});
+
+describe('updateUser', () => {
+    beforeEach(() => {
+        jest.resetAllMocks();
+    });
+
+    it('should update an existing user and return the updated user data', async () => {
+        // Arrange
+        const userId = 1;
+        const mockUser = {
+            id: userId,
+            name: 'Updated User',
+            phone: '1234567890',
+            email: 'updateduser@example.com',
+            password: 'hashedpassword', // This should be a hashed password
+            address: '123 Updated St'
+        };
+
+        User.findByPk.mockResolvedValue({
+            ...mockUser,
+            update: jest.fn().mockResolvedValue(mockUser)
+        }); // Mock the User.findByPk method and the update operation
+
+        const req = {
+            params: { id_user: userId },
+            body: {
+                ...mockUser,
+                password: 'password123' // The unhashed password that the user submits
+            }
+        };
+
+        const res = {
+            status: jest.fn(() => res),
+            json: jest.fn((user) => {
+                return res; // Maintain the chainability of the res object
+            }),
+        };
+
+        // Act
+        await updateUser(req, res);
+
+        // Assert
+        expect(User.findByPk).toHaveBeenCalledWith(userId);
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({
+            name: mockUser.name,
+            phone: mockUser.phone,
+            email: mockUser.email,
+            address: mockUser.address
+        });
+    });
+
+    it('should respond with an error if the user does not exist', async () => {
+        // Arrange
+        const userId = 2;
+        User.findByPk.mockResolvedValue(null); // Simulate user not found
+
+        const req = {
+            params: { id_user: userId },
+            body: {
+                name: 'Updated User',
+                phone: '1234567890',
+                email: 'updateduser@example.com',
+                password: 'hashedpassword', // This should be a hashed password
+                address: '123 Updated St'
+            }
+        };
+
+        const res = {
+            status: jest.fn(() => res),
+            json: jest.fn()
+        };
+
+        // Act
+        await updateUser(req, res);
+
+        // Assert
+        expect(User.findByPk).toHaveBeenCalledWith(userId);
+        expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.json).toHaveBeenCalledWith({ error: 'User not found' });
+    });
+
+    it('should not update the user if the new email is already in use by another user', async () => {
+        // Arrange
+        const userId = 3;
+        const duplicateEmail = 'duplicate@example.com';
+
+        User.findByPk.mockResolvedValue({
+            id: userId,
+            email: 'originaluser@example.com',
+            update: jest.fn()
+        }); // Mock finding the original user
+
+        User.findOne.mockResolvedValue({
+            id: 4,
+            email: duplicateEmail
+        }); // Simulate finding another user with the same email
+
+        const req = {
+            params: { id_user: userId },
+            body: {
+                email: duplicateEmail,
+                name: 'Updated User',
+                phone: '1234567890',
+                password: 'hashedpassword', // This should be a hashed password
+                address: '123 Updated St'
+            }
+        };
+
+        const res = {
+            status: jest.fn(() => res),
+            json: jest.fn()
+        };
+
+        // Act
+        await updateUser(req, res);
+
+        // Assert
+        expect(User.findOne).toHaveBeenCalledWith({ where: { email: duplicateEmail } });
+        expect(res.status).toHaveBeenCalledWith(409);
+        expect(res.json).toHaveBeenCalledWith({ error: 'Email already in use' });
+    });
+
+    it('should respond with an error if required fields are missing', async () => {
+        // Arrange
+        const userId = 5;
+        User.findByPk.mockResolvedValue({ id: userId, email: 'user@example.com' }); // Mock finding the user
+
+        const req = {
+            params: { id_user: userId },
+            body: {
+                // Missing 'name', 'phone', 'password', 'address'
+                email: 'user@example.com'
+            }
+        };
+
+        const res = {
+            status: jest.fn(() => res),
+            json: jest.fn()
+        };
+
+        // Act
+        await updateUser(req, res);
+
+        // Assert
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({ error: 'All fields are required' });
+    });
+
+    it('should handle errors if the update operation fails', async () => {
+        // Arrange
+        const userId = 6;
+        const error = new Error('Update failed');
+
+        User.findByPk.mockResolvedValue({
+            id: userId,
+            email: 'user@example.com',
+            update: jest.fn().mockRejectedValue(error)
+        }); // Mock finding the user and simulate update failure
+
+        const req = {
+            params: { id_user: userId },
+            body: {
+                name: 'Updated User',
+                phone: '1234567890',
+                email: 'user@example.com',
+                password: 'newpassword',
+                address: '123 Updated St'
+            }
+        };
+
+        const res = {
+            status: jest.fn(() => res),
+            json: jest.fn()
+        };
+
+        // Act
+        await updateUser(req, res);
+
+        // Assert
+        expect(User.findByPk).toHaveBeenCalledWith(userId);
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({ error: 'Internal server error' });
     });
 });
