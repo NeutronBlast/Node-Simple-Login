@@ -1,5 +1,5 @@
 // usersController.test.js
-const { getUsers, getUser, createUser, updateUser } = require('../../../app/controllers/usersController');
+const { getUsers, getUser, createUser, updateUser, deleteUser } = require('../../../app/controllers/usersController');
 const User = require('../../../app/models/userModel'); // Adjust the import path as necessary
 const bcrypt = require('bcryptjs');
 
@@ -475,6 +475,70 @@ describe('updateUser', () => {
 
         // Assert
         expect(User.findByPk).toHaveBeenCalledWith(userId);
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({ error: 'Internal server error' });
+    });
+});
+
+describe('deleteUser', () => {
+    beforeEach(() => {
+        jest.resetAllMocks();
+    });
+
+    it('should delete the user if found', async () => {
+        const req = {
+            params: { id_user: '1' },
+        };
+        const res = {
+            status: jest.fn(() => res),
+            end: jest.fn(),
+        };
+
+        User.findByPk.mockResolvedValue({
+            destroy: jest.fn().mockResolvedValue(true),
+        });
+
+        await deleteUser(req, res);
+
+        expect(User.findByPk).toHaveBeenCalledWith('1');
+        expect(res.status).toHaveBeenCalledWith(204);
+        expect(res.end).toHaveBeenCalled();
+    });
+
+    it('should return a 404 if the user is not found', async () => {
+        const req = {
+            params: { id_user: '2' },
+        };
+        const res = {
+            status: jest.fn(() => res),
+            json: jest.fn(),
+        };
+
+        User.findByPk.mockResolvedValue(null);
+
+        await deleteUser(req, res);
+
+        expect(User.findByPk).toHaveBeenCalledWith('2');
+        expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.json).toHaveBeenCalledWith({ error: 'User not found' });
+    });
+
+    it('should return a 500 if there is a server error', async () => {
+        const req = {
+            params: { id_user: '3' },
+        };
+        const res = {
+            status: jest.fn(() => res),
+            json: jest.fn(),
+        };
+
+        User.findByPk.mockResolvedValue({
+            destroy: jest.fn().mockRejectedValue(new Error('Internal server error')),
+        });
+
+        await deleteUser(req, res);
+
+        expect(User.findByPk).toHaveBeenCalledWith('3');
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({ error: 'Internal server error' });
     });

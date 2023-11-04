@@ -151,4 +151,24 @@ exports.updateUser = async (req, res) => {
     }
 };
 
+exports.deleteUser = async (req, res) => {
+    const { id_user } = req.params;
 
+    try {
+        // Find the user by ID
+        const user = await User.findByPk(id_user);
+        if (!user) {
+            // If the user isn't found, return a 404 error
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Delete the user if found
+        await user.destroy();
+
+        // Return a 204 No Content response to signify the user was deleted
+        return res.status(204).end();
+    } catch (error) {
+        // If there's an error during deletion, return a 500 Internal Server Error
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+};
