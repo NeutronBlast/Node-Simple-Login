@@ -29,7 +29,7 @@ const pool = new Pool ({
     ssl: isProduction ? {
         require: true,
         rejectUnauthorized: true, // always true in production
-        ca: fs.readFileSync(process.env.DATABASE_CERT_PATH || 'path/to/ca-certificate.crt').toString(),
+        ca: fs.readFileSync(process.env.DATABASE_CERT_PATH || certPath).toString(),
     } : null,
 });
 
