@@ -32,7 +32,7 @@ const pool = new Pool ({
     ssl: isProduction ? {
         require: true,
         rejectUnauthorized: true, // always true in production
-        ca: fs.readFileSync(process.env.DATABASE_CERT_PATH || certPath).toString(),
+        ca: fs.readFileSync(certPath).toString(),
     } : null,
 });
 
