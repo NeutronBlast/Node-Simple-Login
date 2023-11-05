@@ -7,6 +7,8 @@
  * @module config/db
  */
 const { Pool } = require('pg');
+const path = require('path');
+const fs = require('fs');
 
 /**
  * PostgreSQL connection pool instance.
@@ -16,9 +18,20 @@ const { Pool } = require('pg');
  *
  * @type {Pool}
  */
-const pool = new Pool({
-    connectionString: process.env.POSTGRES_URL + "?sslmode=require",
-})
+
+// Determine SSL usage based on environment
+const isProduction = process.env.NODE_ENV === 'production';
+const certPath = path.join(__dirname, process.env.DATABASE_CERT_PATH);
+
+
+const pool = new Pool ({
+    connectionString: process.env.POSTGRES_URL,
+    ssl: isProduction ? {
+        require: true,
+        rejectUnauthorized: true, // always true in production
+        ca: fs.readFileSync(process.env.DATABASE_CERT_PATH || 'path/to/ca-certificate.crt').toString(),
+    } : null,
+});
 
 /**
  * Establishes a connection to the PostgreSQL database.
