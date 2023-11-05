@@ -17,8 +17,8 @@ const { Pool } = require('pg');
  * @type {Pool}
  */
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL
-});
+    connectionString: process.env.POSTGRES_URL + "?sslmode=require",
+})
 
 /**
  * Establishes a connection to the PostgreSQL database.

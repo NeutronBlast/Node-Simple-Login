@@ -1,0 +1,22 @@
+# Dependency directories
+node_modules/
+npm-debug.log
+
+# Build outputs
+dist/
+build/
+tmp/
+
+# Miscellaneous files
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Git directory
+.git/
+.gitignore
+
+# SSH keys
+.ssh/

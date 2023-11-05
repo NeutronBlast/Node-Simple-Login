@@ -79,7 +79,7 @@ To get a local copy up and running follow these simple example steps.
    ```
 3. Create a .env file on the root path of the project with the following variables
    ```
-   DATABASE_URL=postgresql://[USER]:[PASSWORD]@localhost:5432/nodejs-simple-login
+   POSTGRES_URL=postgresql://[USER]:[PASSWORD]@localhost:5432/nodejs-simple-login
    APP_URL=http://localhost:3000
    JWT_SECRET=[SECRET_KEY]
    ```
