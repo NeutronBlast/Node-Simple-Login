@@ -32,6 +32,7 @@
       </ul>
     </li>
     <li><a href="#api-documentation">API Documentation</a></li>
+    <li><a href="#usage">Usage</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
@@ -83,7 +84,7 @@ To get a local copy up and running follow these simple example steps.
    NODE_ENV=[ENV]
    APP_URL=http://localhost:3000
    JWT_SECRET=[SECRET_KEY]
-   DATABASE_CERT_PATH=./cacert.pem
+   DATABASE_CERT_PATH=../cacert.pem
    ```
 
 4. Go to `config/db` folder and execute `creates.sql` in a database called `nodejs-simple-login` 
@@ -96,13 +97,25 @@ To get a local copy up and running follow these simple example steps.
 
 <!-- USAGE EXAMPLES -->
 ## API Documentation
-<!-- USAGE EXAMPLES SCREENSHOTS -->
 
 You can check the API documentation by clicking [here](https://github.com/NeutronBlast/Node-Simple-Login/tree/main/docs)
 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
+<!-- USAGE EXAMPLES -->
+## Usage
+
+The API is hosted [here](https://node-simple-login.onrender.com). If you want to login use these credentials
+```
+phone: 123
+password: string
+```
+
+You can check the API documentation by clicking [here](https://github.com/NeutronBlast/Node-Simple-Login/tree/main/docs)
+
+
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
