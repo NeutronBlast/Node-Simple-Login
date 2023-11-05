@@ -73,6 +73,7 @@ exports.login = async (req, res) => {
             token_type: "bearer"
         });
     } catch (error) {
+        console.log(error)
         res.status(500).json({ error: 'Internal server error' });
     }
 };
