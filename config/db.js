@@ -25,7 +25,7 @@ const certPath = path.join(__dirname, process.env.DATABASE_CERT_PATH);
 
 console.log('Environment variable DATABASE_CERT_PATH:', process.env.DATABASE_CERT_PATH);
 console.log('__dirname:', __dirname);
-
+console.log('certPath', certPath)
 
 const pool = new Pool ({
     connectionString: process.env.POSTGRES_URL,
